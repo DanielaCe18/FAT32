@@ -96,3 +96,13 @@ fn test_cluster_allocation() {
     let cluster = fs.alloc_cluster(None).expect("Failed to allocate cluster");
     assert!(cluster.0 >= 2);
 }
+
+#[test]
+fn test_fat_value_conversion() {
+    let data_cluster = FatValue::Data(1234);
+    assert_eq!(data_cluster.to_fat32_value(), 1234);
+
+    let end_of_chain = FatValue::EndOfChain(0xFF);
+    assert!(end_of_chain.is_end_of_chain());
+}
+
