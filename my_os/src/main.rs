@@ -1,6 +1,10 @@
 #![no_std]
 #![no_main]
+#![feature(alloc_error_handler)]
 
+extern crate alloc;
+use alloc::vec::Vec;
+use alloc::string::String;
 use core::panic::PanicInfo;
 use uart_16550::SerialPort;
 use spin::Mutex;
@@ -51,7 +55,13 @@ fn panic(info: &PanicInfo) -> ! {
 #[cfg(test)]
 #[panic_handler]
 fn test_panic(info: &PanicInfo) -> ! {
-    println!("Test Panic: {:?}", info);
-    loop {}
+    eprintln!("Test Panic: {:?}", info); // Use `eprintln` for std environment.
+    std::process::abort();
+}
+
+// Allocation error handler (required when using `alloc`)
+#[alloc_error_handler]
+fn alloc_error_handler(layout: core::alloc::Layout) -> ! {
+    panic!("Allocation error: {:?}", layout);
 }
 
