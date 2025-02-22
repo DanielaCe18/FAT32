@@ -50,7 +50,7 @@ fn panic(info: &PanicInfo) -> ! {
 // Panic handler for testing mode (with std)
 #[cfg(test)]
 #[panic_handler]
-fn panic(info: &PanicInfo) -> ! {
+fn test_panic(info: &PanicInfo) -> ! {
     println!("Test Panic: {:?}", info);
     loop {}
 }

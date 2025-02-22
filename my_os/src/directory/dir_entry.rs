@@ -1,8 +1,8 @@
 //! High-level directory entry representation for FAT32.
 
 use crate::directory::cluster::Cluster;
-use crate::filesystem::FatFileSystem;
-use crate::directory::table::FatValue;
+use alloc::string::{String, ToString};
+use alloc::format;
 
 /// Represents metadata about a directory entry.
 #[derive(Debug, Clone, Copy)]
