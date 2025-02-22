@@ -37,3 +37,31 @@ impl DirectoryEntry {
             file_size,
         }
     }
+
+    /// Check if the entry is a directory.
+    pub fn is_directory(&self) -> bool {
+        self.attributes & 0x10 != 0
+    }
+
+    /// Check if the entry is a file.
+    pub fn is_file(&self) -> bool {
+        self.attributes & 0x10 == 0
+    }
+
+    /// Convert the raw filename into a String.
+    pub fn file_name(&self) -> String {
+        let name = String::from_utf8_lossy(&self.file_name[..8])
+            .trim_end_matches(' ')
+            .to_string();
+        let ext = String::from_utf8_lossy(&self.file_name[8..11])
+            .trim_end_matches(' ')
+            .to_string();
+
+        if ext.is_empty() {
+            name
+        } else {
+            format!("{}.{}", name, ext)
+        }
+    }
+}
+
