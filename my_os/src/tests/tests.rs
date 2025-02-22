@@ -4,9 +4,9 @@ extern crate std;
 use crate::filesystem::{FatFileSystem, StorageDevice};
 use crate::directory::cluster::Cluster;
 use crate::directory::table::FatValue;
+use crate::directory::dir_entry::{DirectoryEntry, DirectoryIterator};
 use spin::Mutex;
 use std::vec::Vec;
-
 
 // Mock storage device for testing
 struct MockStorage {
@@ -70,5 +70,42 @@ fn test_fat_value_conversion() {
 
     let end_of_chain = FatValue::EndOfChain;
     assert!(matches!(end_of_chain, FatValue::EndOfChain));
+}
+
+// Test DirectoryEntry creation
+#[test]
+fn test_directory_entry_creation() {
+    let entry = DirectoryEntry::new("TESTFILE.TXT", Cluster(5), 1024, 0x20);
+
+    assert_eq!(entry.file_name(), "TESTFILE.TXT");
+    assert_eq!(entry.start_cluster.0, 5);
+    assert_eq!(entry.file_size, 1024);
+    assert!(entry.is_file());
+    assert!(!entry.is_directory());
+}
+
+// Test DirectoryIterator functionality
+#[test]
+fn test_directory_iterator() {
+    let mock_storage = MockStorage::new(1024 * 1024);
+    let fs = FatFileSystem::new(mock_storage, 0, 4096);
+
+    let cluster = Cluster(2);
+    let entry1 = DirectoryEntry::new("FILE1.TXT", cluster, 512, 0x20);
+    let entry2 = DirectoryEntry::new("DIR1", cluster, 0, 0x10);
+
+    // Write mock entries into storage
+    let entry1_bytes = unsafe { core::mem::transmute::<DirectoryEntry, [u8; 32]>(entry1) };
+    let entry2_bytes = unsafe { core::mem::transmute::<DirectoryEntry, [u8; 32]>(entry2) };
+
+    fs.storage_device.lock().write(0, &entry1_bytes).unwrap();
+    fs.storage_device.lock().write(32, &entry2_bytes).unwrap();
+
+    let mut dir_iter = DirectoryIterator::new(&fs, cluster);
+    let first_entry = dir_iter.next().unwrap();
+    let second_entry = dir_iter.next().unwrap();
+
+    assert_eq!(first_entry.file_name(), "FILE1.TXT");
+    assert_eq!(second_entry.file_name(), "DIR1");
 }
 
