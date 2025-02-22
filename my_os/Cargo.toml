@@ -5,11 +5,12 @@ edition = "2021"
 
 [dependencies]
 x86_64 = "0.14.10"
-bootloader = "0.11.3"
+bootloader = "0.11.10"
 linked_list_allocator = "0.9.0"
-lazy_static = { version = "1.4.0", features = ["spin_no_std"] }
-uart_16550 = "0.2.17"
-spin = "0.9.8"
+bitflags = { version = "2.0", default-features = false }
+lazy_static = { version = "1.4", features = ["spin_no_std"] }
+uart_16550 = "0.2"
+spin = "0.9"
 
 [profile.dev]
 panic = "abort"

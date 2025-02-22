@@ -1,8 +1,7 @@
 //! FAT Table Management
 
 use crate::directory::cluster::Cluster;
-use crate::filesystem::FatFileSystem;
-use spin::Mutex;
+use crate::filesystem::{FatFileSystem, StorageDevice};
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum FatValue {

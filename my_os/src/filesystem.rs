@@ -4,6 +4,11 @@ use crate::directory::cluster::Cluster;
 use crate::directory::table::FatValue;
 use spin::Mutex;
 
+pub trait StorageDevice {
+    fn read(&self, offset: u64, buffer: &mut [u8]) -> Result<(), ()>;
+    fn write(&self, offset: u64, buffer: &[u8]) -> Result<(), ()>;
+}
+
 pub struct FatFileSystem<S: StorageDevice> {
     pub storage_device: Mutex<S>,
     pub partition_start: u64,
@@ -21,8 +26,8 @@ impl<S: StorageDevice> FatFileSystem<S> {
     }
 
     /// Read a cluster from the filesystem.
-    pub fn read_cluster(&self, cluster: Cluster) -> Option<Vec<u8>> {
-        let mut buffer = vec![0; self.cluster_size as usize];
+    pub fn read_cluster(&self, cluster: Cluster) -> Option<alloc::vec::Vec<u8>> {
+        let mut buffer = alloc::vec![0; self.cluster_size as usize];
         let offset = self.partition_start + cluster.to_offset(self.cluster_size);
 
         if self.storage_device.lock().read(offset, &mut buffer).is_ok() {
@@ -40,7 +45,7 @@ impl<S: StorageDevice> FatFileSystem<S> {
 
     /// Allocate a new cluster.
     pub fn allocate_cluster(&self) -> Option<Cluster> {
-        for cluster_id in 2..0xFFFF_FFF8 { // Skip reserved clusters
+        for cluster_id in 2..0xFFFF_FFF8 {
             if let FatValue::Free = FatValue::get(self, Cluster(cluster_id)) {
                 FatValue::put(self, Cluster(cluster_id), FatValue::EndOfChain);
                 return Some(Cluster(cluster_id));
