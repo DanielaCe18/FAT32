@@ -68,3 +68,31 @@ fn test_filesystem_initialization() {
 
     assert_eq!(fs.boot_record.fat_type, FatFsType::Fat32);
 }
+
+#[test]
+fn test_cluster_allocation() {
+    let mock_storage = MockStorage::new(1024 * 1024);
+    let boot_record = FatVolumeBootRecord {
+        bytes_per_block: 512,
+        blocks_per_cluster: 1,
+        reserved_block_count: 32,
+        fats_count: 2,
+        fat_size: 256,
+        root_dir_childs_cluster: 2,
+        fat_type: FatFsType::Fat32,
+        cluster_count: 4096,
+        media_type: 0xF8,
+    };
+
+    let fs = FatFileSystem::new(
+        mock_storage,
+        0,
+        32 * 512,
+        1024 * 1024,
+        boot_record,
+    )
+    .expect("Failed to create FAT filesystem");
+
+    let cluster = fs.alloc_cluster(None).expect("Failed to allocate cluster");
+    assert!(cluster.0 >= 2);
+}
