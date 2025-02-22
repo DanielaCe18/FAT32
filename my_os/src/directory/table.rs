@@ -29,3 +29,19 @@ impl FatValue {
             FatValue::Bad
         }
     }
+
+    /// Set the value of a cluster in the FAT table.
+    pub fn put<S: StorageDevice>(fs: &FatFileSystem<S>, cluster: Cluster, value: Self) {
+        let offset = cluster.to_offset(4);
+        let raw_value = match value {
+            FatValue::Free => 0x0000_0000,
+            FatValue::EndOfChain => 0x0FFF_FFFF,
+            FatValue::Bad => 0x0FFF_FFF7,
+            FatValue::Data(val) => val,
+        };
+
+        let buffer = raw_value.to_le_bytes();
+        let _ = fs.storage_device.lock().write(fs.partition_start + offset, &buffer);
+    }
+}
+
