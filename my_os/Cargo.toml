@@ -11,6 +11,15 @@ bitflags = { version = "2.0", default-features = false }
 lazy_static = { version = "1.4", features = ["spin_no_std"] }
 uart_16550 = "0.2"
 spin = "0.9"
+arrayvec = "0.7"
+
+# Enable std only for testing or user space environments
+[features]
+default = ["std"]      # Default for easier development
+std = []               # Enables compatibility with std
+no_std = []            # Pure no_std mode
+debug = []             # Enables debugging utilities
+global_alloc = []      # Enables the global allocator functionality
 
 [profile.dev]
 panic = "abort"
