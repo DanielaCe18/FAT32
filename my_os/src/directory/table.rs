@@ -11,3 +11,21 @@ pub enum FatValue {
     EndOfChain,
     Bad,
 }
+
+impl FatValue {
+    /// Get the value of a cluster from the FAT table.
+    pub fn get<S: StorageDevice>(fs: &FatFileSystem<S>, cluster: Cluster) -> Self {
+        let offset = cluster.to_offset(4); // FAT32 uses 4 bytes per entry
+        let mut buffer = [0u8; 4];
+
+        if fs.storage_device.lock().read(fs.partition_start + offset, &mut buffer).is_ok() {
+            match u32::from_le_bytes(buffer) {
+                0x0000_0000 => FatValue::Free,
+                0x0FFF_FFF8..=0x0FFF_FFFF => FatValue::EndOfChain,
+                0x0FFF_FFF7 => FatValue::Bad,
+                val => FatValue::Data(val),
+            }
+        } else {
+            FatValue::Bad
+        }
+    }
