@@ -1,4 +1,4 @@
-#![no_std]  // This must be the first line to disable the standard library
+#![cfg_attr(not(feature = "std"), no_std)]  // Enable no_std if std feature is disabled
 #![feature(alloc_error_handler)]
 
 extern crate alloc;
@@ -13,8 +13,12 @@ pub mod memory;
 pub mod process;
 pub mod scheduler;
 pub mod syscall;
+pub mod slab;   // Add the Slab allocator module here
 
-// Allocation error handler for kernel mode
+#[cfg(feature = "global_alloc")]
+pub use slab::ALLOCATOR;  // Use the allocator when the feature is enabled
+
+#[cfg(not(feature = "std"))]
 #[alloc_error_handler]
 fn alloc_error_handler(layout: core::alloc::Layout) -> ! {
     panic!("Allocation error: {:?}", layout);
