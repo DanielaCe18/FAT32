@@ -4,17 +4,29 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-spin = "0.9.0"            # For locks in the kernel
-x86_64 = "0.14.10"        # Low-level CPU access
-bootloader = "0.10.12"    # To boot the kernel
-linked_list_allocator = "0.9.0" # For dynamic memory allocation
+x86_64 = "0.14.10"
+bootloader = "0.11.3"
+linked_list_allocator = "0.9.0"
+lazy_static = { version = "1.4.0", features = ["spin_no_std"] }
+uart_16550 = "0.2.17"
+spin = "0.9.8"
 
 [profile.dev]
 panic = "abort"
+lto = true
+codegen-units = 1
 
 [profile.release]
 panic = "abort"
+lto = true
+codegen-units = 1
+
+[build]
+target = "x86_64-unknown-none"
 
 [build-dependencies]
 bootimage = "0.10.2"
+
+[package.metadata.bootloader]
+target = "x86_64-unknown-none"
 
