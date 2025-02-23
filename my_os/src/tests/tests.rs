@@ -282,4 +282,8 @@ fn test_attributes() {
     assert!(!attr.is_system());
 }
 
-
+#[test]
+fn test_short_filename() {
+    let filename = ShortFileName::new("example", "txt");
+    assert_eq!(filename.as_str(), "EXAMPLE.TXT");
+}
