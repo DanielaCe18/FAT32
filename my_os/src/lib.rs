@@ -1,8 +1,9 @@
-#![cfg_attr(not(feature = "std"), no_std)]  // Enable no_std if std feature is disabled
+#![no_std]
 #![feature(alloc_error_handler)]
 
 extern crate alloc;
 
+// Modules
 pub mod attribute;
 pub mod datetime;
 pub mod name;
@@ -13,12 +14,14 @@ pub mod memory;
 pub mod process;
 pub mod scheduler;
 pub mod syscall;
-pub mod slab;   // Add the Slab allocator module here
+pub mod slab;  // Ensure slab is included if you made it a separate file
 
-#[cfg(feature = "global_alloc")]
-pub use slab::ALLOCATOR;  // Use the allocator when the feature is enabled
+// Global allocator
+use crate::slab::GlobalAllocator;
+#[global_allocator]
+static ALLOCATOR: GlobalAllocator = GlobalAllocator;
 
-#[cfg(not(feature = "std"))]
+// Allocation error handler
 #[alloc_error_handler]
 fn alloc_error_handler(layout: core::alloc::Layout) -> ! {
     panic!("Allocation error: {:?}", layout);
