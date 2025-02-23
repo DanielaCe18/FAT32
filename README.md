@@ -3,14 +3,12 @@
 
 ## 📖Project Overview
 
-My_OS is a custom operating system featuring a lightweight and efficient FAT32 filesystem implemented in Rust. The FAT32 implementation supports basic file operations, memory allocation, and system calls.
-
+My_OS is a custom operating system featuring a lightweight and efficient FAT32 filesystem implemented in Rust in a no std environment.
 
 
 ## 📂 Project Structure
 
-The project follows a modular design for clarity and maintainability:
-
+The project follows a modular design for clarity :
 ```
 my_os/
 ├─ src/
@@ -44,7 +42,7 @@ my_os/
 ## ⚙️ Technical Choices
 
 - **No-Std Environment:** Utilizes `#![no_std]` for lightweight kernel development, ideal for embedded systems.
-- **FAT32 Filesystem:** Supports cluster-based storage, short (8.3) and long file names (LFN), and file attributes.
+- **FAT32 Filesystem:** Supports cluster-based storage, short (8.3) and file attributes.
 - **Slab Allocator:** Efficient memory allocation with reduced fragmentation.
 - **Spinlocks & Mutex:** Ensures safe concurrent access without OS-level threads.
 
