@@ -2,7 +2,6 @@
 #![feature(alloc_error_handler)]
 
 extern crate alloc;
-use core::panic::PanicInfo;
 use uart_16550::SerialPort;
 use spin::Mutex;
 use lazy_static::lazy_static;

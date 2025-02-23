@@ -1,3 +1,6 @@
+use alloc::string::String;
+use alloc::format;
+
 /// Represents a short 8.3 filename.
 #[derive(Debug, Clone, PartialEq)]
 pub struct ShortFileName {

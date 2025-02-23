@@ -1,6 +1,5 @@
 use crate::memory::{allocate, deallocate};
 use crate::process::Process;
-use core::ptr;
 
 /// Syscall: Allocate Memory
 pub fn syscall_alloc(size: usize) -> *mut u8 {
@@ -20,9 +19,8 @@ pub fn syscall_dealloc(ptr: *mut u8, size: usize) {
 }
 
 /// Syscall: Create Process
-pub fn syscall_create_process(name: &'static str, stack_ptr: usize) -> Process {
-    let process = Process::new(name, stack_ptr);
-    process
+pub fn syscall_create_process(name: &'static str) -> Process {
+    Process::new(name)
 }
 
 /// Syscall: Terminate Process
