@@ -1,9 +1,14 @@
 # My_OS FAT32 Filesystem
 
+
 ## 📖Project Overview
+
 My_OS is a custom operating system featuring a lightweight and efficient FAT32 filesystem implemented in Rust. The FAT32 implementation supports basic file operations, memory allocation, and system calls.
 
+
+
 ## 📂 Project Structure
+
 The project follows a modular design for clarity and maintainability:
 
 ```
@@ -34,18 +39,25 @@ my_os/
 └─ Cargo.lock              # Dependency lock file
 ```
 
+
+
 ## ⚙️ Technical Choices
+
 - **No-Std Environment:** Utilizes `#![no_std]` for lightweight kernel development, ideal for embedded systems.
 - **FAT32 Filesystem:** Supports cluster-based storage, short (8.3) and long file names (LFN), and file attributes.
 - **Slab Allocator:** Efficient memory allocation with reduced fragmentation.
 - **Spinlocks & Mutex:** Ensures safe concurrent access without OS-level threads.
 
+
+
 ## 📜 Requirements
+
 Ensure you have the following tools and dependencies installed:
 
 - **Rust:** Latest stable version. Install via [rustup](https://rustup.rs/).
 - **Cargo:** Rust's package manager.
 - **QEMU:** For virtualized OS testing. Install via your package manager:
+
   ```bash
   # Ubuntu/Debian
   sudo apt install qemu-system-x86
@@ -94,6 +106,7 @@ qemu-system-x86_64 -drive format=raw,file=target/x86_64-my_os/debug/bootimage-my
 
 
 ## 🧪 Example Test
+
 ```bash
 $ cargo test
 
@@ -129,10 +142,12 @@ All tests passed successfully!
 ```
 
 
+
 ## 📄 License
 This project is licensed under the MIT License. See the `LICENSE` file for details.
 
 ---
+
 
 🎯 *This project is a step towards building a complete OS with robust filesystem support.*
 
