@@ -9,4 +9,16 @@ pub struct FatDateTime {
     pub second: u8,
 }
 
+impl FatDateTime {
+    pub fn new(year: u16, month: u8, day: u8, hour: u8, minute: u8, second: u8) -> Self {
+        Self {
+            year,
+            month,
+            day,
+            hour,
+            minute,
+            second,
+        }
+    }
+}
 
