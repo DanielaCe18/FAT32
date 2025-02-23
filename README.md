@@ -147,5 +147,5 @@ This project is licensed under the MIT License. See the `LICENSE` file for detai
 ---
 
 
-🎯 *This project is a step towards building a complete OS with robust filesystem support.*
+🎯 *This project is a step towards building a complete OS with robust filesystem support. As it was done within a week while working and doing 4 projects simultaneously the filesystem ofcourse isn't complete. Will try to do my best in the future to ameliorate it.*
 
