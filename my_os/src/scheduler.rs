@@ -3,13 +3,13 @@ use alloc::collections::VecDeque;
 use core::sync::atomic::{AtomicU64, Ordering};
 use spin::Mutex;
 use crate::process::{Process, ProcessState};
+use lazy_static::lazy_static;
 
 /// Global scheduler instance.
 lazy_static! {
     pub static ref SCHEDULER: Mutex<Scheduler> = Mutex::new(Scheduler::new());
 }
 
-/// Represents a process with its state and priority.
 #[derive(Debug)]
 pub struct ScheduledProcess {
     pub process: Process,
@@ -30,28 +30,23 @@ impl Scheduler {
         }
     }
 
-    /// Add a new process to the scheduler.
     pub fn add_process(&mut self, process: Process) {
         let scheduled = ScheduledProcess { process, waker: None };
         self.queue.push_back(scheduled);
     }
 
-    /// Get the next process to run (Round-Robin).
     pub fn next_process(&mut self) -> Option<ScheduledProcess> {
         while let Some(mut scheduled) = self.queue.pop_front() {
-            // Only return if the process is ready to run.
             if scheduled.process.state == ProcessState::Ready {
                 scheduled.process.state = ProcessState::Running;
                 return Some(scheduled);
             } else {
-                // If not ready, push back and check the next one.
                 self.queue.push_back(scheduled);
             }
         }
         None
     }
 
-    /// Mark a process as completed or waiting.
     pub fn complete_process(&mut self, process: Process) {
         if process.state != ProcessState::Terminated {
             let scheduled = ScheduledProcess { process, waker: None };
@@ -59,7 +54,6 @@ impl Scheduler {
         }
     }
 
-    /// Generate a new unique Process ID.
     pub fn generate_pid(&self) -> u64 {
         self.next_pid.fetch_add(1, Ordering::Relaxed)
     }

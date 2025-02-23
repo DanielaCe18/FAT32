@@ -13,13 +13,12 @@ uart_16550 = "0.2"
 spin = "0.9"
 arrayvec = "0.7"
 
-# Enable std only for testing or user space environments
 [features]
-default = ["std"]      # Default for easier development
+default = ["std"]
 std = []               # Enables compatibility with std
 no_std = []            # Pure no_std mode
-debug = []             # Enables debugging utilities
-global_alloc = []      # Enables the global allocator functionality
+debug = []             # Debugging utilities
+global_alloc = []      # Global allocator
 
 [profile.dev]
 panic = "abort"
@@ -30,9 +29,6 @@ codegen-units = 1
 panic = "abort"
 lto = true
 codegen-units = 1
-
-[build]
-target = "x86_64-unknown-none"
 
 [build-dependencies]
 bootimage = "0.10.2"

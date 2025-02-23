@@ -8,6 +8,7 @@ use uart_16550::SerialPort;
 use spin::Mutex;
 use lazy_static::lazy_static;
 
+// Serial port for printing
 lazy_static! {
     pub static ref SERIAL1: Mutex<SerialPort> = {
         let mut serial_port = unsafe { SerialPort::new(0x3F8) };
@@ -36,6 +37,12 @@ macro_rules! println {
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
     println!("Welcome to My OS!");
+
+    // Example process creation
+    let mut process = crate::process::Process::new("Init");
+    process.run();
+    process.terminate();
+
     loop {}
 }
 
@@ -51,11 +58,11 @@ fn panic(info: &PanicInfo) -> ! {
 #[cfg(feature = "std")]
 #[panic_handler]
 fn test_panic(info: &PanicInfo) -> ! {
-    eprintln!("Test Panic: {:?}", info);
-    std::process::abort();
+    println!("Test Panic: {:?}", info);
+    loop {}
 }
 
-// Alloc error handler (no_std only)
+// Allocation error handler (no_std only)
 #[cfg(not(feature = "std"))]
 #[alloc_error_handler]
 fn alloc_error_handler(layout: core::alloc::Layout) -> ! {

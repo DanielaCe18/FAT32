@@ -14,10 +14,10 @@ pub mod memory;
 pub mod process;
 pub mod scheduler;
 pub mod syscall;
-pub mod slab;  // Ensure slab is included if you made it a separate file
+pub mod slab;
 
 // Global allocator
-use crate::slab::GlobalAllocator;
+use slab::GlobalAllocator;
 #[global_allocator]
 static ALLOCATOR: GlobalAllocator = GlobalAllocator;
 
