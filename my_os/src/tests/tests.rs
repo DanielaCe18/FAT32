@@ -187,3 +187,21 @@ fn test_failed_allocation() {
     }
 }
 
+#[test]
+fn test_memory_allocation() {
+    use crate::memory::{allocate, deallocate};
+
+    let size = 256;
+    let ptr = allocate(size);
+    assert!(!ptr.is_null(), "Allocation failed");
+
+    unsafe {
+        // Write to the allocated memory
+        core::ptr::write_bytes(ptr, 0xAA, size);
+    }
+
+    // Deallocate memory
+    deallocate(ptr, size);
+}
+
+
