@@ -209,6 +209,3 @@ unsafe impl GlobalAlloc for GlobalAllocator {
     }
 }
 
-#[global_allocator]
-static ALLOCATOR: GlobalAllocator = GlobalAllocator;
-

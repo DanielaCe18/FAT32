@@ -5,10 +5,11 @@ use spin::Mutex;
 use crate::process::{Process, ProcessState};
 use lazy_static::lazy_static;
 
-/// Global scheduler instance.
+#[doc = "Global scheduler instance."]
 lazy_static! {
     pub static ref SCHEDULER: Mutex<Scheduler> = Mutex::new(Scheduler::new());
 }
+
 
 #[derive(Debug)]
 pub struct ScheduledProcess {

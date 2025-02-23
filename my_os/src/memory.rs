@@ -1,8 +1,8 @@
 use x86_64::{PhysAddr, VirtAddr};
-use x86_64::structures::paging::{PageTableIndex};
 use x86_64::registers::control::Cr3;
 use core::alloc::{GlobalAlloc, Layout};
-use crate::slab::GlobalAllocator;
+use crate::ALLOCATOR;
+
 
 // Convert virtual address to physical
 pub fn virt_to_phys(virt_addr: VirtAddr) -> Option<PhysAddr> {
