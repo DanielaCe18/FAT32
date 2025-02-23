@@ -3,11 +3,12 @@
 #![feature(alloc_error_handler)]
 
 extern crate alloc;
+
 use core::panic::PanicInfo;
 use uart_16550::SerialPort;
 use spin::Mutex;
 use lazy_static::lazy_static;
-use crate::process::Process; // Correct import
+use my_os::process::Process; // Correct import from crate root
 
 // Serial port for printing
 lazy_static! {
@@ -47,7 +48,7 @@ pub extern "C" fn _start() -> ! {
     loop {}
 }
 
-// Panic handler (Kernel mode)
+// Panic handler for kernel mode (no_std)
 #[cfg(not(feature = "std"))]
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
@@ -55,14 +56,14 @@ fn panic(info: &PanicInfo) -> ! {
     loop {}
 }
 
-// Alloc error handler
+// Allocation error handler (no_std only)
 #[cfg(not(feature = "std"))]
 #[alloc_error_handler]
 fn alloc_error_handler(layout: core::alloc::Layout) -> ! {
     panic!("Allocation error: {:?}", layout);
 }
 
-// Panic handler for tests
+// Panic handler for testing mode (std)
 #[cfg(all(test, feature = "std"))]
 #[panic_handler]
 fn test_panic(info: &PanicInfo) -> ! {

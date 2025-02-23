@@ -14,11 +14,11 @@ spin = "0.9"
 arrayvec = "0.7"
 
 [features]
-default = ["std"]
-std = []               # Enables compatibility with std
-no_std = []            # Pure no_std mode
-debug = []             # Debugging utilities
-global_alloc = []      # Global allocator
+default = ["no_std"]    # Ensure `no_std` mode by default
+std = []                # Feature to enable `std`
+no_std = []             # Ensure pure no_std
+debug = []              # Debugging utilities
+global_alloc = []       # Global allocator
 
 [profile.dev]
 panic = "abort"
