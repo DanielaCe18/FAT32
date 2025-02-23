@@ -11,6 +11,13 @@ impl Attributes {
 
     pub fn new(value: u8) -> Self {
         Self(value)
+    }
 
-}
+    pub fn is_read_only(self) -> bool {
+        self.0 & Self::READ_ONLY != 0
+    }
+
+    pub fn is_hidden(self) -> bool {
+        self.0 & Self::HIDDEN != 0
+    }
 
