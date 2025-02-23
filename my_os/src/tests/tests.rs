@@ -295,3 +295,14 @@ fn test_fat_datetime() {
     assert!(timestamp > 1_700_000_000);  // Rough check for current date range
 }
 
+#[test]
+fn test_cluster_offset_iter() {
+    let start_cluster = Cluster(5);
+    let end_cluster = 7;
+    let mut iter = ClusterOffsetIter::new(start_cluster, end_cluster);
+
+    assert_eq!(iter.next::<()>(), Some(Cluster(5)));
+    assert_eq!(iter.next::<()>(), Some(Cluster(6)));
+    assert_eq!(iter.next::<()>(), Some(Cluster(7)));
+    assert_eq!(iter.next::<()>(), None);
+}
