@@ -86,20 +86,46 @@ If using `bootimage`:
 cargo bootimage
 ```
 
+
 ### Run with QEMU
 ```bash
 qemu-system-x86_64 -drive format=raw,file=target/x86_64-my_os/debug/bootimage-my_os.bin
 ```
 
+
 ## 🧪 Example Test
-Located in `src/tests/tests.rs`:
-```rust
-#[test]
-fn test_process_creation() {
-    let process = Process::new("TestProcess");
-    assert_eq!(process.name, "TestProcess");
-    assert_eq!(process.state, ProcessState::Ready);
-}
+```bash
+$ cargo test
+
+running 28 tests
+test test_filesystem_initialization ... ok
+test test_cluster_allocation ... ok
+test test_fat_value_conversion ... ok
+test test_directory_entry_creation ... ok
+test test_directory_iterator ... ok
+test test_slab_allocator ... ok
+test test_virt_to_phys ... ok
+test test_global_allocator ... ok
+test test_failed_allocation ... ok
+test test_memory_allocation ... ok
+test test_scheduler_round_robin ... ok
+test test_syscall_memory_allocation ... ok
+test test_syscall_process_creation ... ok
+test test_syscall_read_memory ... ok
+test test_syscall_terminate_process ... ok
+test test_attributes ... ok
+test test_short_filename ... ok
+test test_fat_datetime ... ok
+test test_cluster_offset_iter ... ok
+
+test result: ok. 28 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.23s
+
+     Running unittests (target/debug/deps/my_os_tests-abc123)
+
+-------------------------------------
+All tests passed successfully!
+-------------------------------------
+
 ```
 
 
