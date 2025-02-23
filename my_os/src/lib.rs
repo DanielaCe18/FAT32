@@ -1,7 +1,8 @@
 #![no_std]
 #![feature(alloc_error_handler)]
-#[macro_use] 
+#[macro_use]
 extern crate alloc;
+
 use uart_16550::SerialPort;
 use spin::Mutex;
 use lazy_static::lazy_static;
@@ -36,12 +37,13 @@ macro_rules! print {
 #[macro_export]
 macro_rules! println {
     ($($arg:tt)*) => {{
-        print!("{}\n", format_args!($($arg)*));
+        $crate::print!("{}\n", format_args!($($arg)*));
     }};
 }
 
 // Global allocator
-use slab::GlobalAllocator;
+use crate::slab::GlobalAllocator;
+
 #[global_allocator]
 static ALLOCATOR: GlobalAllocator = GlobalAllocator;
 

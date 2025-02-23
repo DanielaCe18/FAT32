@@ -3,8 +3,7 @@ use x86_64::registers::control::Cr3;
 use core::alloc::{GlobalAlloc, Layout};
 use crate::ALLOCATOR;
 
-
-// Convert virtual address to physical
+// Convert virtual address to physical address
 pub fn virt_to_phys(virt_addr: VirtAddr) -> Option<PhysAddr> {
     let (frame, _) = Cr3::read();
     let page_table = frame.start_address().as_u64();
@@ -32,10 +31,12 @@ pub fn virt_to_phys(virt_addr: VirtAddr) -> Option<PhysAddr> {
     None
 }
 
+// Allocate memory
 pub fn allocate(size: usize) -> *mut u8 {
     unsafe { ALLOCATOR.alloc(Layout::from_size_align(size, 8).unwrap()) }
 }
 
+// Deallocate memory
 pub fn deallocate(ptr: *mut u8, size: usize) {
     unsafe { ALLOCATOR.dealloc(ptr, Layout::from_size_align(size, 8).unwrap()) }
 }

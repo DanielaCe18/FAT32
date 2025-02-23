@@ -7,12 +7,6 @@ use core::ptr::null_mut;
 use spin::Mutex;
 use core::marker::PhantomData;
 
-#[cfg(feature = "debug")]
-use core::fmt::{self, Write};
-
-#[cfg(feature = "debug")]
-use spin::Mutex as SpinMutex;
-
 fn atomic_bts(bitmap: &[AtomicU8], index: usize) -> Option<bool> {
     let byte_index = index / 8;
     let bit_index = (index % 8) as u8;
@@ -116,49 +110,8 @@ static GLOBAL_POOLS: Mutex<Option<[Option<Slab>; 2]>> = Mutex::new(None);
 static POOL_1: StaticMemoryPool<1024> = StaticMemoryPool::new();
 static POOL_2: StaticMemoryPool<2048> = StaticMemoryPool::new();
 
-#[cfg(feature = "debug")]
-static DEBUG_LOG: SpinMutex<Option<DebugLogger>> = SpinMutex::new(None);
-
-#[cfg(feature = "debug")]
-struct DebugLogger;
-
-#[cfg(feature = "debug")]
-impl DebugLogger {
-    fn log(&self, message: &str) {
-        for byte in message.bytes() {
-            unsafe {
-                self.write_byte(byte);
-            }
-        }
-    }
-
-    fn get_logger(&self) -> impl Write {
-        struct DebugWriter;
-
-        impl Write for DebugWriter {
-            fn write_str(&mut self, s: &str) -> fmt::Result {
-                let logger = DebugLogger;
-                logger.log(s);
-                Ok(())
-            }
-        }
-
-        DebugWriter
-    }
-
-    unsafe fn write_byte(&self, byte: u8) {
-        const DEBUG_OUTPUT: *mut u8 = 0x1000 as *mut u8;
-        core::ptr::write_volatile(DEBUG_OUTPUT, byte);
-    }
-}
-
 unsafe impl GlobalAlloc for GlobalAllocator {
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
-        #[cfg(feature = "debug")]
-        if let Some(logger) = DEBUG_LOG.lock().as_ref() {
-            logger.log(&format!("Allocating {} bytes\n", layout.size()));
-        }
-
         let size = layout.size();
         let mut pools = GLOBAL_POOLS.lock();
 
@@ -190,11 +143,6 @@ unsafe impl GlobalAlloc for GlobalAllocator {
     }
 
     unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
-        #[cfg(feature = "debug")]
-        if let Some(logger) = DEBUG_LOG.lock().as_ref() {
-            logger.log(&format!("Deallocating {} bytes\n", layout.size()));
-        }
-
         let size = layout.size();
         let pools = GLOBAL_POOLS.lock();
 
