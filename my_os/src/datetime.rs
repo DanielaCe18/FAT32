@@ -20,5 +20,12 @@ impl FatDateTime {
             second,
         }
     }
+
+    /// Converts the FAT date-time to a UNIX timestamp (simple approximation).
+    pub fn to_unix_timestamp(&self) -> u64 {
+        let days = (self.year as u64 - 1970) * 365 + (self.month as u64 * 30) + self.day as u64;
+        let seconds = days * 24 * 60 * 60;
+        seconds + (self.hour as u64 * 3600) + (self.minute as u64 * 60) + self.second as u64
+    }
 }
 
