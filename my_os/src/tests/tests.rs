@@ -5,10 +5,11 @@ use crate::filesystem::{FatFileSystem, StorageDevice};
 use crate::directory::cluster::Cluster;
 use crate::directory::table::FatValue;
 use crate::directory::dir_entry::{DirectoryEntry, DirectoryIterator};
-use spin::Mutex;
-use std::vec::Vec;
 use crate::process::Process;
 use crate::scheduler::SCHEDULER;
+use crate::syscall::*;
+use spin::Mutex;
+use std::vec::Vec;
 
 // Mock storage device for testing
 struct MockStorage {
@@ -149,7 +150,6 @@ fn test_virt_to_phys() {
     }
 }
 
-
 #[test]
 fn test_global_allocator() {
     use alloc::vec::Vec;
@@ -229,3 +229,44 @@ fn test_scheduler_round_robin() {
         scheduler.complete_process(proc.process);
     }
 }
+
+// Syscall tests
+#[test]
+fn test_syscall_memory_allocation() {
+    let size = 512;
+    let ptr = syscall_alloc(size);
+    assert!(!ptr.is_null(), "Syscall allocation failed");
+
+    // Write to memory and check
+    unsafe { core::ptr::write_bytes(ptr, 0xBB, size) };
+
+    syscall_dealloc(ptr, size);
+}
+
+#[test]
+fn test_syscall_process_creation() {
+    let process = syscall_create_process("TestSyscallProcess", 0x2000);
+    assert_eq!(process.name, "TestSyscallProcess");
+    assert_eq!(process.state, crate::process::ProcessState::Ready);
+}
+
+#[test]
+fn test_syscall_read_memory() {
+    let size = 128;
+    let ptr = syscall_alloc(size);
+    unsafe { core::ptr::write_bytes(ptr, 0xCC, size) };
+
+    let read = syscall_read_mem(ptr, size);
+    assert!(read.is_some());
+    assert_eq!(read.unwrap().len(), size);
+
+    syscall_dealloc(ptr, size);
+}
+
+#[test]
+fn test_syscall_terminate_process() {
+    let mut process = syscall_create_process("TermProcess", 0x3000);
+    syscall_terminate_process(&mut process);
+    assert_eq!(process.state, crate::process::ProcessState::Terminated);
+}
+
