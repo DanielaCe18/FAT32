@@ -10,6 +10,10 @@ use crate::scheduler::SCHEDULER;
 use crate::syscall::*;
 use spin::Mutex;
 use std::vec::Vec;
+use crate::attribute::Attributes;
+use crate::name::ShortFileName;
+use crate::datetime::FatDateTime;
+use crate::offset_iter::ClusterOffsetIter;
 
 // Mock storage device for testing
 struct MockStorage {
@@ -269,4 +273,13 @@ fn test_syscall_terminate_process() {
     syscall_terminate_process(&mut process);
     assert_eq!(process.state, crate::process::ProcessState::Terminated);
 }
+
+#[test]
+fn test_attributes() {
+    let attr = Attributes::new(Attributes::READ_ONLY | Attributes::HIDDEN);
+    assert!(attr.is_read_only());
+    assert!(attr.is_hidden());
+    assert!(!attr.is_system());
+}
+
 
