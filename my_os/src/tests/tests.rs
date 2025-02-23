@@ -287,3 +287,11 @@ fn test_short_filename() {
     let filename = ShortFileName::new("example", "txt");
     assert_eq!(filename.as_str(), "EXAMPLE.TXT");
 }
+
+#[test]
+fn test_fat_datetime() {
+    let datetime = FatDateTime::new(2024, 6, 1, 12, 0, 0);
+    let timestamp = datetime.to_unix_timestamp();
+    assert!(timestamp > 1_700_000_000);  // Rough check for current date range
+}
+
