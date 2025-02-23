@@ -21,3 +21,16 @@ impl Attributes {
         self.0 & Self::HIDDEN != 0
     }
 
+    pub fn is_system(self) -> bool {
+        self.0 & Self::SYSTEM != 0
+    }
+
+    pub fn is_directory(self) -> bool {
+        self.0 & Self::DIRECTORY != 0
+    }
+
+    pub fn is_archive(self) -> bool {
+        self.0 & Self::ARCHIVE != 0
+    }
+}
+
