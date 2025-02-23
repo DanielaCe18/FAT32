@@ -50,3 +50,18 @@ impl Scheduler {
         }
         None
     }
+
+    /// Mark a process as completed or waiting.
+    pub fn complete_process(&mut self, process: Process) {
+        if process.state != ProcessState::Terminated {
+            let scheduled = ScheduledProcess { process, waker: None };
+            self.queue.push_back(scheduled);
+        }
+    }
+
+    /// Generate a new unique Process ID.
+    pub fn generate_pid(&self) -> u64 {
+        self.next_pid.fetch_add(1, Ordering::Relaxed)
+    }
+}
+
