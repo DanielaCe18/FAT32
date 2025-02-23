@@ -1,16 +1,13 @@
 #![no_std]
 #![no_main]
-#![feature(alloc_error_handler)]
+#![cfg_attr(not(feature = "std"), feature(alloc_error_handler))]
 
 extern crate alloc;
-use alloc::vec::Vec;
-use alloc::string::String;
 use core::panic::PanicInfo;
 use uart_16550::SerialPort;
 use spin::Mutex;
 use lazy_static::lazy_static;
 
-// Serial port for printing
 lazy_static! {
     pub static ref SERIAL1: Mutex<SerialPort> = {
         let mut serial_port = unsafe { SerialPort::new(0x3F8) };
@@ -19,7 +16,7 @@ lazy_static! {
     };
 }
 
-// Print macro for serial output
+// Print macros
 #[macro_export]
 macro_rules! print {
     ($($arg:tt)*) => {{
@@ -28,7 +25,6 @@ macro_rules! print {
     }};
 }
 
-// Println macro for serial output
 #[macro_export]
 macro_rules! println {
     ($($arg:tt)*) => {{
@@ -43,23 +39,24 @@ pub extern "C" fn _start() -> ! {
     loop {}
 }
 
-// Panic handler for kernel mode (no_std)
-#[cfg(not(test))]
+// Panic handler (Kernel mode)
+#[cfg(not(feature = "std"))]
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
     println!("Kernel Panic: {:?}", info);
     loop {}
 }
 
-// Panic handler for testing mode (with std)
-#[cfg(test)]
+// Panic handler (Testing mode)
+#[cfg(feature = "std")]
 #[panic_handler]
 fn test_panic(info: &PanicInfo) -> ! {
-    eprintln!("Test Panic: {:?}", info); // Use `eprintln` for std environment.
+    eprintln!("Test Panic: {:?}", info);
     std::process::abort();
 }
 
-// Allocation error handler (required when using `alloc`)
+// Alloc error handler (no_std only)
+#[cfg(not(feature = "std"))]
 #[alloc_error_handler]
 fn alloc_error_handler(layout: core::alloc::Layout) -> ! {
     panic!("Allocation error: {:?}", layout);

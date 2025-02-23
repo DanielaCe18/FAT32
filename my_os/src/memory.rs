@@ -1,6 +1,8 @@
 use x86_64::{PhysAddr, VirtAddr};
 use x86_64::structures::paging::{PageTable, PageTableIndex};
 use x86_64::registers::control::Cr3;
+use core::alloc::{GlobalAlloc, Layout};
+use crate::slab::GlobalAllocator;
 
 /// Converts a virtual address to a physical address.
 pub fn virt_to_phys(virt_addr: VirtAddr) -> Option<PhysAddr> {
@@ -33,5 +35,15 @@ pub fn virt_to_phys(virt_addr: VirtAddr) -> Option<PhysAddr> {
     }
 
     None
+}
+
+/// Allocates memory using the slab allocator.
+pub fn allocate(size: usize) -> *mut u8 {
+    unsafe { ALLOCATOR.alloc(Layout::from_size_align(size, 8).unwrap()) }
+}
+
+/// Deallocates memory using the slab allocator.
+pub fn deallocate(ptr: *mut u8, size: usize) {
+    unsafe { ALLOCATOR.dealloc(ptr, Layout::from_size_align(size, 8).unwrap()) }
 }
 
