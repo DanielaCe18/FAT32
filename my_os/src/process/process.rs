@@ -1,4 +1,4 @@
-use crate::println;
+use crate::{print, println};
 use core::sync::atomic::{AtomicU64, Ordering};
 
 
