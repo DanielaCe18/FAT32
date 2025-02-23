@@ -1,7 +1,7 @@
 # My_OS FAT32 Filesystem
 
-## 📖 Project Overview
-My_OS is a custom operating system featuring a lightweight and efficient FAT32 filesystem implemented in Rust. This project demonstrates a modular approach to filesystem design, ensuring compatibility with embedded systems through the `no_std` environment. The FAT32 implementation supports basic file operations, memory allocation, and system calls.
+## 📖Project Overview
+My_OS is a custom operating system featuring a lightweight and efficient FAT32 filesystem implemented in Rust. The FAT32 implementation supports basic file operations, memory allocation, and system calls.
 
 ## 📂 Project Structure
 The project follows a modular design for clarity and maintainability:
@@ -63,22 +63,6 @@ Ensure the `rust-src` component is installed:
 rustup component add rust-src
 ```
 
-## 📝 Code Highlights
-### Entry Point (`main.rs`)
-```rust
-#[no_mangle]
-pub extern "C" fn _start() -> ! {
-    println!("Welcome to My OS!");
-    let mut process = Process::new("Init");
-    process.run();
-    process.terminate();
-    loop {}
-}
-```
-- `_start` is the OS entry point.
-- Creates and runs an initial process.
-- Infinite loop maintains kernel execution.
-
 ## 🚀 Build and Run Instructions
 
 ### Build in No-Std Mode
@@ -118,10 +102,6 @@ fn test_process_creation() {
 }
 ```
 
-## 📜 Future Improvements
-- Write-back caching for faster operations.
-- Journaling for crash resilience.
-- Advanced process scheduling.
 
 ## 📄 License
 This project is licensed under the MIT License. See the `LICENSE` file for details.
