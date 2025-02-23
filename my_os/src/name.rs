@@ -1,4 +1,4 @@
-=/// Represents a short 8.3 filename.
+/// Represents a short 8.3 filename.
 #[derive(Debug, Clone, PartialEq)]
 pub struct ShortFileName {
     name: [u8; 11], // 8 bytes for name + 3 for extension
@@ -23,4 +23,12 @@ impl ShortFileName {
         Self { name: short_name }
     }
 
+    pub fn as_str(&self) -> String {
+        format!(
+            "{}.{}",
+            String::from_utf8_lossy(&self.name[..8]).trim(),
+            String::from_utf8_lossy(&self.name[8..]).trim()
+        )
+    }
+}
 
