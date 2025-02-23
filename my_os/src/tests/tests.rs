@@ -10,10 +10,11 @@ use crate::scheduler::SCHEDULER;
 use crate::syscall::*;
 use spin::Mutex;
 use std::vec::Vec;
-use crate::attribute::Attributes;
-use crate::name::ShortFileName;
-use crate::datetime::FatDateTime;
-use crate::offset_iter::ClusterOffsetIter;
+use crate::directory::attribute::Attributes;
+use crate::directory::name::ShortFileName;
+use crate::directory::datetime::FatDateTime;
+use crate::directory::offset_iter::ClusterOffsetIter;
+
 
 // Mock storage device for testing
 struct MockStorage {

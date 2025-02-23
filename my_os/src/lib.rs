@@ -1,6 +1,6 @@
 #![no_std]
 #![feature(alloc_error_handler)]
-
+#[macro_use] 
 extern crate alloc;
 use uart_16550::SerialPort;
 use spin::Mutex;
@@ -16,10 +16,6 @@ lazy_static! {
 }
 
 // Modules
-pub mod attribute;
-pub mod datetime;
-pub mod name;
-pub mod offset_iter;
 pub mod directory;
 pub mod filesystem;
 pub mod memory;
