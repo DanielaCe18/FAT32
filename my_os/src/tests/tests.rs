@@ -109,3 +109,81 @@ fn test_directory_iterator() {
     assert_eq!(second_entry.file_name(), "DIR1");
 }
 
+#[test]
+fn test_slab_allocator() {
+    use crate::slab::{Slab, StaticMemoryPool};
+    use core::mem::MaybeUninit;
+
+    const POOL_SIZE: usize = 1024;
+    static MEMORY_POOL: StaticMemoryPool<POOL_SIZE> = StaticMemoryPool::new();
+
+    unsafe {
+        let slab = Slab::new(MEMORY_POOL.as_mut_ptr(), POOL_SIZE, 16);
+
+        // Allocate objects
+        let ptr1 = slab.alloc().expect("Allocation failed");
+        let ptr2 = slab.alloc().expect("Allocation failed");
+
+        assert!(!ptr1.is_null());
+        assert!(!ptr2.is_null());
+        assert_ne!(ptr1, ptr2);
+
+        // Free the first object
+        slab.free(ptr1);
+        let ptr3 = slab.alloc().expect("Reallocation failed");
+
+        // Ensure the memory was reused
+        assert_eq!(ptr1, ptr3);
+    }
+}
+
+#[test]
+fn test_virt_to_phys_translation() {
+    use crate::memory::virt_to_phys;
+
+    let virtual_address: usize = 0x1000_0000;
+    let physical_address = virt_to_phys(virtual_address);
+
+    assert!(physical_address.is_some());
+    assert_eq!(physical_address.unwrap() & 0xFFF, 0);  // Ensure page alignment
+}
+
+#[test]
+fn test_global_allocator() {
+    use alloc::vec::Vec;
+
+    let mut vec: Vec<u8> = Vec::new();
+    for i in 0..100 {
+        vec.push(i);
+    }
+
+    assert_eq!(vec.len(), 100);
+    assert_eq!(vec[0], 0);
+    assert_eq!(vec[99], 99);
+}
+
+#[test]
+fn test_failed_allocation() {
+    use crate::slab::{Slab, StaticMemoryPool};
+    use core::mem::MaybeUninit;
+
+    const SMALL_POOL: usize = 128;
+    static MEMORY_POOL: StaticMemoryPool<SMALL_POOL> = StaticMemoryPool::new();
+
+    unsafe {
+        let slab = Slab::new(MEMORY_POOL.as_mut_ptr(), SMALL_POOL, 64);
+
+        let ptr1 = slab.alloc().expect("First allocation failed");
+        let ptr2 = slab.alloc();
+
+        // Second allocation should fail due to limited pool size
+        assert!(ptr2.is_none());
+
+        // Free and reallocate
+        slab.free(ptr1);
+        let ptr3 = slab.alloc().expect("Reallocation failed");
+
+        assert_eq!(ptr1, ptr3);
+    }
+}
+
