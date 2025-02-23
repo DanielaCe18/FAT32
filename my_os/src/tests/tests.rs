@@ -7,6 +7,8 @@ use crate::directory::table::FatValue;
 use crate::directory::dir_entry::{DirectoryEntry, DirectoryIterator};
 use spin::Mutex;
 use std::vec::Vec;
+use crate::process::Process;
+use crate::scheduler::SCHEDULER;
 
 // Mock storage device for testing
 struct MockStorage {
@@ -204,4 +206,26 @@ fn test_memory_allocation() {
     deallocate(ptr, size);
 }
 
+#[test]
+fn test_scheduler_round_robin() {
+    let mut scheduler = SCHEDULER.lock();
 
+    // Create test processes
+    let process1 = Process::new("Process 1");
+    let process2 = Process::new("Process 2");
+
+    // Add processes to the scheduler
+    scheduler.add_process(process1);
+    scheduler.add_process(process2);
+
+    // Run the scheduler
+    if let Some(mut proc) = scheduler.next_process() {
+        proc.process.run();
+        scheduler.complete_process(proc.process);
+    }
+
+    if let Some(mut proc) = scheduler.next_process() {
+        proc.process.run();
+        scheduler.complete_process(proc.process);
+    }
+}
