@@ -1,12 +1,13 @@
 #![no_std]
 #![no_main]
-#![cfg_attr(not(feature = "std"), feature(alloc_error_handler))]
+#![feature(alloc_error_handler)]
 
 extern crate alloc;
 use core::panic::PanicInfo;
 use uart_16550::SerialPort;
 use spin::Mutex;
 use lazy_static::lazy_static;
+use crate::process::Process; // Correct import
 
 // Serial port for printing
 lazy_static! {
@@ -39,7 +40,7 @@ pub extern "C" fn _start() -> ! {
     println!("Welcome to My OS!");
 
     // Example process creation
-    let mut process = crate::process::Process::new("Init");
+    let mut process = Process::new("Init");  
     process.run();
     process.terminate();
 
@@ -54,18 +55,18 @@ fn panic(info: &PanicInfo) -> ! {
     loop {}
 }
 
-// Panic handler (Testing mode)
-#[cfg(feature = "std")]
-#[panic_handler]
-fn test_panic(info: &PanicInfo) -> ! {
-    println!("Test Panic: {:?}", info);
-    loop {}
-}
-
-// Allocation error handler (no_std only)
+// Alloc error handler
 #[cfg(not(feature = "std"))]
 #[alloc_error_handler]
 fn alloc_error_handler(layout: core::alloc::Layout) -> ! {
     panic!("Allocation error: {:?}", layout);
+}
+
+// Panic handler for tests
+#[cfg(all(test, feature = "std"))]
+#[panic_handler]
+fn test_panic(info: &PanicInfo) -> ! {
+    println!("Test Panic: {:?}", info);
+    loop {}
 }
 
