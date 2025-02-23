@@ -30,3 +30,11 @@ pub fn syscall_terminate_process(process: &mut Process) {
     process.terminate();
 }
 
+/// Syscall: Read Memory (Example)
+pub fn syscall_read_mem(ptr: *const u8, size: usize) -> Option<&'static [u8]> {
+    if ptr.is_null() {
+        return None;
+    }
+    Some(unsafe { core::slice::from_raw_parts(ptr, size) })
+}
+
