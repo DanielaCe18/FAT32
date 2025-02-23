@@ -18,3 +18,15 @@ pub fn syscall_dealloc(ptr: *mut u8, size: usize) {
     }
     deallocate(ptr, size);
 }
+
+/// Syscall: Create Process
+pub fn syscall_create_process(name: &'static str, stack_ptr: usize) -> Process {
+    let process = Process::new(name, stack_ptr);
+    process
+}
+
+/// Syscall: Terminate Process
+pub fn syscall_terminate_process(process: &mut Process) {
+    process.terminate();
+}
+
